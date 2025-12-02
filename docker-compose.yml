@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: verity-postgres
+    environment:
+      POSTGRES_USER: verity
+      POSTGRES_PASSWORD: verity
+      POSTGRES_DB: verity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U verity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - verity-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: verity-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - verity-network
+
+  # Verity Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verity-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://verity:verity@postgres:5432/verity
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+      - SECRET_KEY=dev-secret-key-change-in-production
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./temp:/app/temp
+      - ./models:/app/models
+      - ./logs:/app/logs
+    networks:
+      - verity-network
+    restart: unless-stopped
+
+  # Celery Worker (for background tasks)
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verity-celery-worker
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://verity:verity@postgres:5432/verity
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    command: celery -A app.celery_app worker --loglevel=info
+    volumes:
+      - ./uploads:/app/uploads
+      - ./temp:/app/temp
+      - ./models:/app/models
+    networks:
+      - verity-network
+    restart: unless-stopped
+
+  # PgAdmin (optional, for database management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: verity-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@verity.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - verity-network
+    profiles:
+      - tools
+
+networks:
+  verity-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
