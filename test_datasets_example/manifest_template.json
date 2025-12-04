@@ -1,0 +1,132 @@
+{
+  "dataset_name": "AI Detection Test Dataset",
+  "version": "1.0.0",
+  "created": "2025-12-03",
+  "description": "Benchmark dataset for testing AI-generated vs authentic image detection",
+  "statistics": {
+    "total_samples": 100,
+    "authentic": 50,
+    "ai_generated": 50,
+    "generators": {
+      "midjourney": 15,
+      "stable_diffusion": 15,
+      "dalle": 10,
+      "firefly": 10
+    },
+    "categories": {
+      "portraits": 30,
+      "landscapes": 25,
+      "abstract": 20,
+      "objects": 25
+    }
+  },
+  "test_cases": [
+    {
+      "file_path": "authentic/camera_photo_001.jpg",
+      "true_label": "authentic",
+      "metadata": {
+        "source": "Canon EOS R5",
+        "category": "portrait",
+        "has_c2pa": false,
+        "has_exif": true,
+        "resolution": "6000x4000",
+        "notes": "Professional portrait with natural lighting"
+      }
+    },
+    {
+      "file_path": "authentic/iphone_photo_001.jpg",
+      "true_label": "authentic",
+      "metadata": {
+        "source": "iPhone 15 Pro",
+        "category": "landscape",
+        "has_c2pa": false,
+        "has_exif": true,
+        "resolution": "4032x3024",
+        "notes": "Natural landscape, unedited"
+      }
+    },
+    {
+      "file_path": "ai_generated/midjourney_portrait_001.png",
+      "true_label": "ai_generated",
+      "metadata": {
+        "generator": "Midjourney",
+        "version": "v6",
+        "category": "portrait",
+        "prompt": "professional portrait of a person in natural lighting --ar 3:2 --v 6",
+        "resolution": "1536x1024",
+        "has_exif": false,
+        "notes": "Realistic AI portrait, may fool simple detectors"
+      }
+    },
+    {
+      "file_path": "ai_generated/stable_diffusion_landscape_001.png",
+      "true_label": "ai_generated",
+      "metadata": {
+        "generator": "Stable Diffusion",
+        "version": "XL 1.0",
+        "category": "landscape",
+        "prompt": "beautiful mountain landscape at sunset, photorealistic",
+        "model": "sd_xl_base_1.0.safetensors",
+        "steps": 50,
+        "cfg_scale": 7.5,
+        "sampler": "DPM++ 2M Karras",
+        "resolution": "1024x1024",
+        "has_exif": false,
+        "notes": "Photorealistic landscape"
+      }
+    },
+    {
+      "file_path": "ai_generated/dalle_object_001.png",
+      "true_label": "ai_generated",
+      "metadata": {
+        "generator": "DALL-E",
+        "version": "3",
+        "category": "object",
+        "prompt": "product photo of a modern coffee maker on white background",
+        "resolution": "1024x1024",
+        "has_exif": false,
+        "notes": "Product-style image"
+      }
+    },
+    {
+      "file_path": "authentic/edited_photo_001.jpg",
+      "true_label": "authentic",
+      "metadata": {
+        "source": "Sony A7IV",
+        "category": "portrait",
+        "has_c2pa": false,
+        "has_exif": true,
+        "edited": true,
+        "edits": ["color_grading", "exposure_adjustment", "slight_retouching"],
+        "resolution": "4000x6000",
+        "notes": "EDGE CASE: Professional photo with heavy post-processing"
+      }
+    },
+    {
+      "file_path": "ai_generated/firefly_abstract_001.jpg",
+      "true_label": "ai_generated",
+      "metadata": {
+        "generator": "Adobe Firefly",
+        "version": "2.0",
+        "category": "abstract",
+        "prompt": "abstract colorful pattern, modern art style",
+        "resolution": "2048x2048",
+        "has_exif": false,
+        "notes": "Abstract art, different visual characteristics"
+      }
+    }
+  ],
+  "validation_notes": {
+    "ground_truth_verified": true,
+    "reviewed_by": "human_reviewer",
+    "edge_cases": [
+      "edited_photo_001.jpg - heavily edited authentic photo",
+      "midjourney_portrait_001.png - highly realistic AI portrait"
+    ],
+    "recommended_splits": {
+      "easy": "Simple cases with obvious artifacts",
+      "medium": "Realistic but detectable",
+      "hard": "Edge cases and highly realistic AI"
+    }
+  }
+}

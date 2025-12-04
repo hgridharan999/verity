@@ -53,7 +53,7 @@ class Verification(Base):
     storage_path = Column(String(512))
 
     # User/API information
-    api_key_id = Column(String(36), ForeignKey("api_keys.id"), nullable=False, index=True)
+    api_key_id = Column(String(36), ForeignKey("api_keys.id"), nullable=True, index=True)
     user_id = Column(String(36), index=True)
     vertical = Column(String(50), index=True)  # insurance, legal, ecommerce, news
 

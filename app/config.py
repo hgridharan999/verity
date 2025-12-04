@@ -106,7 +106,7 @@ class Settings(BaseSettings):
 
     # Security
     enable_cors: bool = Field(default=True, description="Enable CORS")
-    cors_origins: str = Field(default='["http://localhost:3000"]', description="CORS origins (JSON array)")
+    cors_origins: List[str] = Field(default='["http://localhost:3000"]', description="CORS origins (JSON array)")
     api_key_expiry_days: int = Field(default=365, description="API key expiry days")
     enable_api_key_rotation: bool = Field(default=True, description="Enable API key rotation")
 

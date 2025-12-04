@@ -23,7 +23,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     # Check database
     try:
         result = await db.execute(text("SELECT 1"))
-        await result.fetchone()
+        result.fetchone()
         services["database"] = "healthy"
     except Exception as e:
         services["database"] = f"unhealthy: {str(e)}"
@@ -69,7 +69,7 @@ async def readiness_check(db: AsyncSession = Depends(get_db)):
     try:
         # Check database connectivity
         result = await db.execute(text("SELECT 1"))
-        await result.fetchone()
+        result.fetchone()
         return {"status": "ready"}
     except Exception:
         from fastapi import HTTPException, status

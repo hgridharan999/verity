@@ -88,7 +88,7 @@ async def verify_content(
             file_format=ingestion_result["file_format"],
             original_filename=file.filename,
             storage_path=ingestion_result["storage_path"],
-            api_key_id="default",  # TODO: Get from authentication
+            api_key_id=None,  # TODO: Get from authentication
             vertical=vertical,
             status=VerificationStatus.PROCESSING,
             processing_started_at=datetime.utcnow(),
