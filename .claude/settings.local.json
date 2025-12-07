@@ -12,7 +12,11 @@
       "Bash(python create_test_image.py:*)",
       "Bash(python test_verify.py:*)",
       "Bash(curl.exe:*)",
-      "Bash(docker-compose exec:*)"
+      "Bash(docker-compose exec:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose build:*)"
     ],
     "deny": [],
     "ask": []

@@ -26,6 +26,7 @@ Pillow==10.2.0
 opencv-python==4.9.0.80
 numpy==1.26.3
 scikit-image==0.22.0
+scipy==1.11.4
 
 # Metadata Extraction
 exifread==3.0.0
